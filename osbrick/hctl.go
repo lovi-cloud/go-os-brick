@@ -17,7 +17,7 @@ type Hctl struct {
 
 // GetHctl search a some ID by given session ID.
 // return ID of host, channel, target.
-func GetHctl(sessionID int, hostLUNID string) (*Hctl, error) {
+func GetHctl(sessionID, hostLUNID int) (*Hctl, error) {
 	globStr := fmt.Sprintf("/sys/class/iscsi_host/host*/device/session%d/target*", sessionID)
 	paths, err := filepath.Glob(globStr)
 	if err != nil {
@@ -48,16 +48,11 @@ func GetHctl(sessionID int, hostLUNID string) (*Hctl, error) {
 		return nil, fmt.Errorf("failed to parse host ID: %w", err)
 	}
 
-	hostlunid, err := strconv.Atoi(hostLUNID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse Host LUN ID: %w", err)
-	}
-
 	hctl := &Hctl{
 		HostID:    hostID,
 		ChannelID: channelID,
 		TargetID:  targetID,
-		HostLUNID: hostlunid,
+		HostLUNID: hostLUNID,
 	}
 
 	return hctl, nil

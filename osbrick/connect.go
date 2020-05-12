@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func connectVol(ctx context.Context, portalIP, targetIqn, targetHostLunID string) (string, error) {
+func connectVol(ctx context.Context, portalIP, targetIqn string, targetHostLunID int) (string, error) {
 	sessionID, err := connectToiSCSIPortal(ctx, portalIP, targetIqn, 0)
 	if err != nil {
 		return "", fmt.Errorf("failed to connect iSCSI portal: %s", err)

@@ -56,7 +56,7 @@ func LogoutPortal(ctx context.Context, portalIP string) error {
 }
 
 // GetIpsIqnsLuns get a some information
-func GetIPsIQNsLUNs(ctx context.Context, portalIP, targetHostLUNID string) ([]string, []string, []string, error) {
+func GetIPsIQNsLUNs(ctx context.Context, portalIP string, targetHostLUNID int) ([]string, []string, []int, error) {
 	out, err := doSendtargets(ctx, portalIP)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to update discoverydb: %w", err)
@@ -92,8 +92,8 @@ func getIPsIQNs(out []byte) (ips []string, iqns []string, err error) {
 	return ips, iqns, nil
 }
 
-func getLUNs(targetHostLUNID string, targetIQNCount int) []string {
-	var targetLUNs []string
+func getLUNs(targetHostLUNID, targetIQNCount int) []int {
+	var targetLUNs []int
 	for i := 0; i < targetIQNCount; i++ {
 		targetLUNs = append(targetLUNs, targetHostLUNID)
 	}

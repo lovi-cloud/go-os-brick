@@ -11,11 +11,11 @@ import (
 type ISCSIPath struct {
 	PortalIP  string
 	TargetIQN string
-	HostLUNID string
+	HostLUNID int
 }
 
 // ConnectMultipathVolume connect to iSCSI volume using multipath.
-func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID string) (string, error) {
+func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) (string, error) {
 	var paths []ISCSIPath
 	var err error
 	for _, portalIP := range targetPortalIPs {
