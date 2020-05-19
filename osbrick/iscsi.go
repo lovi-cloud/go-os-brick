@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"os/exec"
 	"strings"
 )
 
@@ -20,15 +22,20 @@ const (
 	ExitCodeNoRecord     = 21
 )
 
+// command binary
+var (
+	BinaryTee = "tee"
+)
+
 // LoginPortal login to iSCSI portal
 func LoginPortal(ctx context.Context, portalIP, targetIQN string) error {
 	logf("start login to portal [Portal: %s]\n", portalIP)
-	_, exitCode, err := iscsiadm(ctx, targetIQN, portalIP, []string{"--login"})
+	_, exitCode, err := iscsiadm(ctx, portalIP, targetIQN, []string{"--login"})
 	if err != nil && exitCode != ExitCodeAlreadyLogin {
 		return fmt.Errorf("failed to execute command that login to iscsi portal (PortalIP: %s): %w", portalIP, err)
 	}
 
-	_, _, err = iscsiadmUpdate(ctx, portalIP, "node.startup", "automatic", nil)
+	_, _, err = iscsiadmUpdate(ctx, portalIP, targetIQN, "node.startup", "automatic", nil)
 	if err != nil {
 		return fmt.Errorf("failed to update node.startup to automatic: %w", err)
 	}
@@ -39,14 +46,14 @@ func LoginPortal(ctx context.Context, portalIP, targetIQN string) error {
 }
 
 // LogoutPortal logout from iSCSI portal
-func LogoutPortal(ctx context.Context, portalIP string) error {
+func LogoutPortal(ctx context.Context, portalIP, targetIQN string) error {
 	logf("start logout to portal [Portal: %s]\n", portalIP)
-	_, _, err := iscsiadmUpdate(ctx, portalIP, "node.startup", "manual", nil)
+	_, _, err := iscsiadmUpdate(ctx, portalIP, targetIQN, "node.startup", "manual", nil)
 	if err != nil {
 		return fmt.Errorf("failed to update node.startup to manual: %w", err)
 	}
 
-	_, _, err = iscsiadm(ctx, "", portalIP, []string{"--logout"})
+	_, _, err = iscsiadm(ctx, portalIP, targetIQN, []string{"--logout"})
 	if err != nil {
 		return fmt.Errorf("failed to logout iscsi portal (PortalIP: %s): %w", portalIP, err)
 	}
@@ -55,7 +62,7 @@ func LogoutPortal(ctx context.Context, portalIP string) error {
 	return nil
 }
 
-// GetIpsIqnsLuns get a some information
+// GetIPsIQNsLUNs get a some information
 func GetIPsIQNsLUNs(ctx context.Context, portalIP string, targetHostLUNID int) ([]string, []string, []int, error) {
 	out, err := doSendtargets(ctx, portalIP)
 	if err != nil {
@@ -110,4 +117,26 @@ func doSendtargets(ctx context.Context, portalIP string) ([]byte, error) {
 	}
 
 	return out, nil
+}
+
+func echoScsiCommand(ctx context.Context, path, content string) error {
+	logf("write scsi file [path: %s content: %s]", path, content)
+	args := []string{"-a", path}
+
+	cmd := exec.CommandContext(ctx, BinaryTee, args...)
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		fmt.Errorf("failed to get stdin pipe: %w", err)
+	}
+	go func() {
+		defer stdin.Close()
+		io.WriteString(stdin, content)
+	}()
+
+	_, err = cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to execute command")
+	}
+
+	return nil
 }
