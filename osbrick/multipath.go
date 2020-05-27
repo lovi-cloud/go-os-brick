@@ -55,6 +55,15 @@ func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targe
 		wg.Add(1)
 		device, err := connectVol(ctx, p.PortalIP, p.TargetIQN, p.HostLUNID)
 		if err != nil {
+			defer func() {
+				for _, p := range paths {
+					err := LogoutPortal(ctx, p.PortalIP, p.TargetIQN)
+					if err != nil {
+						logf("failed to logout: %w", err)
+					}
+				}
+			}()
+
 			return "", fmt.Errorf("failed to connect volume: %w", err)
 		}
 		devices = append(devices, device)
@@ -73,7 +82,6 @@ func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targe
 
 		logf("found err, continue... [device: %s] [err: %s]", d, err.Error())
 		continue
-
 	}
 
 	return filepath.Join("/dev", dm), nil
