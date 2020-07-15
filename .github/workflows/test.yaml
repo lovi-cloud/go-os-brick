@@ -1,0 +1,17 @@
+name: test
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  build-test-image:
+    name: Build Docker image for test
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+      - name: login GitHub Registry
+        run: docker login docker.pkg.github.com -u owner -p ${{ secrets.GITHUB_TOKEN }}
+      - name: build image
+        run: docker build -t docker.pkg.github.com/${{ github.repository }}/iscsi-initiator-target:${{ github.sha }} test/docker
+      - name: push image
+        run: docker push docker.pkg.github.com/${{ github.repository }}/iscsi-initiator-target:${{ github.sha }}
