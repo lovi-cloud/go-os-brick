@@ -103,5 +103,6 @@ func GetTestTarget() (string, string, func(), error) {
 
 	return portalIP, tgtName, func() {
 		targetDriver.Close()
+		os.Remove(tmpFile.Name())
 	}, nil
 }
