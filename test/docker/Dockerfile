@@ -1,9 +1,13 @@
-FROM whywaita/gotgt
+FROM debian:buster
 
 MAINTAINER whywaita <https://github.com/whywaita>
 
-RUN apt install -y open-iscsi multipath-tools
+RUN apt update -y -qq \
+    && apt install -y targetcli-fb dbus kmod
 
-EXPOSE 3260
+## targetcli need privileged, so execute when docker run --privileged.
+COPY init.sh /
 
-CMD ["/go/src/github.com/gostor/gotgt/_output/cmd/bin/gotgt", "daemon", "--log", "debug"]
+EXPOSE 3260/tcp
+
+ENTRYPOINT ["/init.sh"]

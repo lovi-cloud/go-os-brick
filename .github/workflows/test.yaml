@@ -4,14 +4,31 @@ on:
     branches:
       - "**"
 jobs:
-  build-test-image:
-    name: Build Docker image for test
-    runs-on: ubuntu-18.04
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: login GitHub Registry
-        run: docker login docker.pkg.github.com -u owner -p ${{ secrets.GITHUB_TOKEN }}
-      - name: build image
-        run: docker build -t docker.pkg.github.com/${{ github.repository }}/iscsi-initiator-target:${{ github.sha }} test/docker
-      - name: push image
-        run: docker push docker.pkg.github.com/${{ github.repository }}/iscsi-initiator-target:${{ github.sha }}
+      - name: setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.x
+      - name: checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: test
+        run: go test -v ./...
+
+  test-by-openiscsi:
+    name: test by real open-iscsi container (only support on linux)
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.x
+      - name: checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: test
+        run: go test -tags=container -v ./...

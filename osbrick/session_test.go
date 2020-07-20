@@ -1,10 +1,8 @@
-package osbrick_test
+package osbrick
 
 import (
 	"reflect"
 	"testing"
-
-	"github.com/whywaita/go-os-brick/osbrick"
 )
 
 func TestParseSessions(t *testing.T) {
@@ -14,7 +12,7 @@ func TestParseSessions(t *testing.T) {
 tcp: [5] 192.0.2.100:3260,2 iqn.0000-00.com.example:name100:192.0.2.100 (non-flash)`, // multi sessions
 	}
 
-	testOutput := [][]osbrick.ISCSISession{
+	testOutput := [][]ISCSISession{
 		{
 			{
 				Transport:            "tcp",
@@ -46,7 +44,7 @@ tcp: [5] 192.0.2.100:3260,2 iqn.0000-00.com.example:name100:192.0.2.100 (non-fla
 	}
 
 	for i, input := range testInput {
-		sessions, err := osbrick.ParseSessions([]byte(input))
+		sessions, err := ParseSessions([]byte(input))
 		if err != nil {
 			t.Error(err)
 		}
