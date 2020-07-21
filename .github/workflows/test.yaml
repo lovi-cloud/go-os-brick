@@ -5,6 +5,7 @@ on:
       - "**"
 jobs:
   test:
+    name: test by gostor/gotgt (support multi platform)
     runs-on: ubuntu-latest
     steps:
       - name: setup go
