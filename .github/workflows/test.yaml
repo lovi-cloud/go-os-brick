@@ -6,7 +6,7 @@ on:
 jobs:
   test:
     name: test by gostor/gotgt (support multi platform)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: setup go
         uses: actions/setup-go@v1
@@ -21,7 +21,7 @@ jobs:
 
   test-by-openiscsi:
     name: test by real open-iscsi container (only support on linux)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: setup go
         uses: actions/setup-go@v1
