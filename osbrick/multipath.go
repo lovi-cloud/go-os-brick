@@ -59,7 +59,7 @@ func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targe
 				for _, p := range paths {
 					err := LogoutPortal(ctx, p.PortalIP, p.TargetIQN)
 					if err != nil {
-						logf("failed to logout: %w", err)
+						logf("failed to logout: %+v", err)
 					}
 				}
 			}()
