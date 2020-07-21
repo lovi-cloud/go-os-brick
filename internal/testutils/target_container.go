@@ -68,7 +68,7 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 }
 
 // GetTestTarget return portalIP, targetIQN, teardown function
-func GetTestTarget() (string, string func()) {
+func GetTestTarget() (string, string, func()) {
 	if testTargetHost == "" {
 		panic("testTarget is not initialized yes")
 	}
