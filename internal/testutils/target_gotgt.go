@@ -94,8 +94,7 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 		},
 	}
 
-	err = targetDriver.NewTarget(tgtName, &conf)
-	if err != nil {
+	if err := targetDriver.NewTarget(tgtName, &conf); err != nil {
 		log.Fatalf("Could not create target daemon: %+v", err)
 	}
 
