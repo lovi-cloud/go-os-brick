@@ -1,0 +1,35 @@
+name: test
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  test:
+    name: test by gostor/gotgt (support multi platform)
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.x
+      - name: checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: test
+        run: go test -v ./...
+
+  test-by-openiscsi:
+    name: test by real open-iscsi container (only support on linux)
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.x
+      - name: checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: test
+        run: go test -tags=container -v ./...
