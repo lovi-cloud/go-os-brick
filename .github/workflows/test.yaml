@@ -18,6 +18,9 @@ jobs:
           fetch-depth: 1
       - name: test
         run: sudo go test -v ./...
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
 
   test-by-openiscsi:
     name: test by real open-iscsi container (only support on linux)
@@ -33,3 +36,6 @@ jobs:
           fetch-depth: 1
       - name: test
         run: sudo go test -tags=container -v ./...
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
