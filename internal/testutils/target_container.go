@@ -17,6 +17,10 @@ import (
 )
 
 func integrationTestTargetRunnerVirtual(m *testing.M) int {
+	testTargetIQN = "iqn.0000-00.com.example:target0"
+	testTgtHostLUNID = "0"
+	testInitiatorIQN = "iqn.0000-00.com.example:initiator0"
+
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		log.Fatalf("Could not connect to docker: %+v", err)
@@ -63,13 +67,13 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 	return code
 }
 
-// GetTestTargetAddress return iSCSI Address for testing
-func GetTestTargetAddress() (string, func()) {
+// GetTestTarget return portalIP, targetIQN, teardown function
+func GetTestTarget() (string, string, func()) {
 	if testTargetHost == "" {
 		panic("testTarget is not initialized yes")
 	}
 
-	return testTargetHost, func() { truncateDisk() }
+	return testTargetHost, testTargetIQN, func() { truncateDisk() }
 }
 
 func truncateDisk() {

@@ -8,7 +8,7 @@ import (
 )
 
 func TestLoginLogoutPortal(t *testing.T) {
-	testTargetIP, teardown := testutils.GetTestTargetAddress()
+	testTargetIP, targetIQN, teardown := testutils.GetTestTarget()
 	defer teardown()
 
 	_, err := doSendtargets(context.Background(), testTargetIP)
@@ -16,17 +16,17 @@ func TestLoginLogoutPortal(t *testing.T) {
 		t.Errorf("doSendtargets return err: %+v", err)
 	}
 
-	if err := LoginPortal(context.Background(), testTargetIP, testutils.TargetIQN); err != nil {
+	if err := LoginPortal(context.Background(), testTargetIP, targetIQN); err != nil {
 		t.Errorf("LoginPortal return err: %+v", err)
 	}
 
-	if err := LogoutPortal(context.Background(), testTargetIP, testutils.TargetIQN); err != nil {
+	if err := LogoutPortal(context.Background(), testTargetIP, targetIQN); err != nil {
 		t.Errorf("LogoutPortal return err: %+v", err)
 	}
 }
 
 func TestDoSendtargets(t *testing.T) {
-	testTargetIP, teardown := testutils.GetTestTargetAddress()
+	testTargetIP, _, teardown := testutils.GetTestTarget()
 	defer teardown()
 
 	_, err := doSendtargets(context.Background(), testTargetIP)

@@ -6,16 +6,16 @@ import (
 	"testing"
 )
 
-// const for testing
+// testing file path
 const (
 	testDockerfilePath = "%s/../../test/docker/Dockerfile"
-	TargetIQN          = "iqn.0000-00.com.example:target0"
-	TgtHostLUNID       = "0"
-	InitiatorIQN       = "iqn.0000-00.com.example:initiator0"
 )
 
 var (
-	testTargetHost string
+	testTargetHost   string
+	testTargetIQN    string
+	testTgtHostLUNID string
+	testInitiatorIQN string
 )
 
 // IntegrationTestTargetRunner is setup function for iSCSI target
