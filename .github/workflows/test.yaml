@@ -22,20 +22,20 @@ jobs:
         if: failure()
         uses: jwalton/gh-docker-logs@v1
 
-  test-by-openiscsi:
-    name: test by real open-iscsi container (fail on GitHub Actions)
-    runs-on: ubuntu-latest
-    steps:
-      - name: setup go
-        uses: actions/setup-go@v1
-        with:
-          go-version: 1.x
-      - name: checkout
-        uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - name: test
-        run: sudo go test -tags=container -v ./...
-      - name: Dump docker logs on failure
-        if: failure()
-        uses: jwalton/gh-docker-logs@v1
+#  test-by-openiscsi:
+#    name: test by real open-iscsi container (fail on GitHub Actions)
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: setup go
+#        uses: actions/setup-go@v1
+#        with:
+#          go-version: 1.x
+#      - name: checkout
+#        uses: actions/checkout@v1
+#        with:
+#          fetch-depth: 1
+#      - name: test
+#        run: sudo go test -tags=container -v ./...
+#      - name: Dump docker logs on failure
+#        if: failure()
+#        uses: jwalton/gh-docker-logs@v1
