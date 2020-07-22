@@ -6,7 +6,7 @@ on:
 jobs:
   test:
     name: test by gostor/gotgt (support multi platform)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: setup go
         uses: actions/setup-go@v1
@@ -17,11 +17,11 @@ jobs:
         with:
           fetch-depth: 1
       - name: test
-        run: go test -v ./...
+        run: sudo go test -v ./...
 
   test-by-openiscsi:
     name: test by real open-iscsi container (only support on linux)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: setup go
         uses: actions/setup-go@v1
@@ -32,4 +32,4 @@ jobs:
         with:
           fetch-depth: 1
       - name: test
-        run: go test -tags=container -v ./...
+        run: sudo go test -tags=container -v ./...
