@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func integrationTestTargetRunnerReal(m *testing.M) int {
+func integrationTestTargetRunnerReal(m *testing.M, realTargetAddress, realTargetIQN string) int {
 	addresses := strings.Split(realTargetAddress, ",")
 
 	testTargetHosts = addresses

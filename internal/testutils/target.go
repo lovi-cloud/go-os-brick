@@ -1,6 +1,7 @@
 package testutils
 
 import (
+	"log"
 	"os"
 	"testing"
 )
@@ -11,24 +12,21 @@ const (
 )
 
 var (
-	testTargetHosts   []string
-	testTargetIQN     string
-	testTgtHostLUNID  string
-	testInitiatorIQN  string
-	realTargetAddress string
-	realTargetIQN     string
+	testTargetHosts  []string
+	testTargetIQN    string
+	testTgtHostLUNID string
+	testInitiatorIQN string
 )
-
-func init() {
-	realTargetAddress = os.Getenv("OS_BRICK_TEST_PORTAL_ADDRESS")
-	realTargetIQN = os.Getenv("OS_BRICK_TEST_TARGET_IQN")
-}
 
 // IntegrationTestTargetRunner is setup function for iSCSI target
 func IntegrationTestTargetRunner(m *testing.M) int {
+	realTargetAddress := os.Getenv("OS_BRICK_TEST_PORTAL_ADDRESS")
+	realTargetIQN := os.Getenv("OS_BRICK_TEST_TARGET_IQN")
+
 	if realTargetAddress != "" {
 		// connect real target portal address
-		return integrationTestTargetRunnerReal(m)
+		log.Printf("test endpoint: %s", realTargetAddress)
+		return integrationTestTargetRunnerReal(m, realTargetAddress, realTargetIQN)
 	}
 
 	return integrationTestTargetRunnerVirtual(m)
