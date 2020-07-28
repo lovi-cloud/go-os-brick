@@ -52,7 +52,7 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 		}
 		defer conn.Close()
 
-		testTargetHost = []string{targetHost}
+		testTargetHosts = []string{targetHost}
 		return nil
 	}); err != nil {
 		log.Fatalf("Could not connect to docker: %+v", err)
