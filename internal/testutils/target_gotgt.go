@@ -104,7 +104,7 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 		}
 	}()
 
-	testTargetHost = portalIP
+	testTargetHosts = []string{portalIP}
 	testTargetIQN = tgtName
 
 	code := m.Run()
@@ -114,9 +114,4 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 
 	return code
 
-}
-
-// GetTestTarget return portalIP, targetIQN, teardown function
-func GetTestTarget() (string, string, func()) {
-	return testTargetHost, testTargetIQN, func() {}
 }

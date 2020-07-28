@@ -52,7 +52,7 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 		}
 		defer conn.Close()
 
-		testTargetHost = targetHost
+		testTargetHosts = []string{targetHost}
 		return nil
 	}); err != nil {
 		log.Fatalf("Could not connect to docker: %+v", err)
@@ -65,17 +65,4 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 	}
 
 	return code
-}
-
-// GetTestTarget return portalIP, targetIQN, teardown function
-func GetTestTarget() (string, string, func()) {
-	if testTargetHost == "" {
-		panic("testTarget is not initialized yes")
-	}
-
-	return testTargetHost, testTargetIQN, func() { truncateDisk() }
-}
-
-func truncateDisk() {
-
 }

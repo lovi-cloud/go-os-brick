@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	testTargetHost   string
+	testTargetHosts  []string
 	testTargetIQN    string
 	testTgtHostLUNID string
 	testInitiatorIQN string
@@ -20,15 +20,23 @@ var (
 
 // IntegrationTestTargetRunner is setup function for iSCSI target
 func IntegrationTestTargetRunner(m *testing.M) int {
-	if os.Getenv("OS_BRICK_TEST_PORTAL_ADDRESS") != "" {
+	realTargetAddress := os.Getenv("OS_BRICK_TEST_PORTAL_ADDRESS")
+	realTargetIQN := os.Getenv("OS_BRICK_TEST_TARGET_IQN")
+
+	if realTargetAddress != "" {
 		// connect real target portal address
-		return integrationTestTargetRunnerReal(m)
+		log.Printf("test endpoint: %s", realTargetAddress)
+		return integrationTestTargetRunnerReal(m, realTargetAddress, realTargetIQN)
 	}
 
 	return integrationTestTargetRunnerVirtual(m)
 }
 
-func integrationTestTargetRunnerReal(m *testing.M) int {
-	log.Fatalf("implement me")
-	return 1
+// GetTestTarget return portalIPs, targetIQN, teardown function
+func GetTestTarget() ([]string, string, func()) {
+	if len(testTargetHosts) == 0 {
+		panic("testTarget is not initialized yes")
+	}
+
+	return testTargetHosts, testTargetIQN, func() {}
 }
