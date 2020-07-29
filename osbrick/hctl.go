@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Hctl is IDs of SCSI
@@ -72,6 +73,24 @@ func searchHost(names []string) string {
 
 // GetDeviceName get device name of connected volume
 func GetDeviceName(sessionID int, hctl *Hctl) (string, error) {
+	var lastErr error
+
+	for i := 0; i < 5; i++ {
+		// retry 5 times
+		deviceName, err := getDeviceName(sessionID, hctl)
+		if err == nil {
+			return deviceName, nil
+		}
+
+		logf("failed to get device name, do retry: %w", err)
+		lastErr = err
+		time.Sleep(1 * time.Second)
+	}
+
+	return "", lastErr
+}
+
+func getDeviceName(sessionID int, hctl *Hctl) (string, error) {
 	p := fmt.Sprintf(
 		"/sys/class/iscsi_host/host%d/device/session%d/target%d:%d:%d/%d:%d:%d:%d/block/*",
 		hctl.HostID,
