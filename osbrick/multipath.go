@@ -105,12 +105,17 @@ func cleanupConnection(ctx context.Context, targetPortalIPs []string, targetHost
 	}
 
 	// check keep block device in same portal ip (from iscsiadm -m session -P3)
-	//if errors.Is(err, ErrNoDevice) {
-	//	// call logout when No action session
-	//	if err := disconnectConnection(ctx, paths); err != nil {
-	//		return fmt.Errorf("failed to disconnet iSCSI connection: %w", err)
-	//	}
-	//}
+	attachedDevices, err := GetAttachedSCSIDevices(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to get attached devices: %w", err)
+	}
+
+	if len(attachedDevices) == 0 {
+		// call logout when No action session
+		if err := disconnectConnection(ctx, paths); err != nil {
+			return fmt.Errorf("failed to disconnet iSCSI connection: %w", err)
+		}
+	}
 
 	return nil
 }
