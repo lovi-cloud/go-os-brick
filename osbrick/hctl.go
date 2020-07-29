@@ -75,8 +75,8 @@ func searchHost(names []string) string {
 func GetDeviceName(sessionID int, hctl *Hctl) (string, error) {
 	var lastErr error
 
-	for i := 0; i < 5*60; i++ {
-		// retry 5 minutes
+	for i := 0; i < 10; i++ {
+		// retry 10 times
 		deviceName, err := getDeviceName(sessionID, hctl)
 		if err == nil {
 			return deviceName, nil
