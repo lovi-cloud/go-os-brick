@@ -82,7 +82,7 @@ func GetDeviceName(sessionID int, hctl *Hctl) (string, error) {
 			return deviceName, nil
 		}
 
-		logf("failed to get device name, do retry: %+v", err)
+		logf("failed to get device name (sessionID: %d, hctl: %v), do retry: %+v", sessionID, hctl, err)
 		lastErr = err
 		time.Sleep(1 * time.Second)
 	}
@@ -98,6 +98,7 @@ func getDeviceName(sessionID int, hctl *Hctl) (string, error) {
 		hctl.HostID, hctl.ChannelID, hctl.TargetID,
 		hctl.HostID, hctl.ChannelID, hctl.TargetID, hctl.HostLUNID)
 
+	fmt.Println(p)
 	paths, err := filepath.Glob(p)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse iSCSI block device filepath: %w", err)
