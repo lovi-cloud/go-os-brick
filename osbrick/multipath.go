@@ -113,14 +113,19 @@ func cleanupConnection(ctx context.Context, targetPortalIPs []string, targetHost
 		return fmt.Errorf("failed to remove connection: %w", err)
 	}
 
-	err = disconnectConnection(ctx, paths)
-	if err != nil {
-		return fmt.Errorf("failed to disconnet iSCSI connection: %w", err)
-	}
+	// check keep block device in same portal ip (from iscsiadm -m session -P3)
+	//if errors.Is(err, ErrNoDevice) {
+	//	// call logout when No action session
+	//	if err := disconnectConnection(ctx, paths); err != nil {
+	//		return fmt.Errorf("failed to disconnet iSCSI connection: %w", err)
+	//	}
+	//}
 
 	return nil
 }
 
+// disconnectConnection logout from portal ip.
+// this function delete all device from p.PortalIP
 func disconnectConnection(ctx context.Context, paths []ISCSIPath) error {
 	for _, p := range paths {
 		err := disconnectFromIscsiPortal(ctx, p.PortalIP, p.TargetIQN)
@@ -151,7 +156,7 @@ func disconnectFromIscsiPortal(ctx context.Context, portalIP, targetIQN string) 
 	return nil
 }
 
-// RemoveConnection remove iscsi multipath session
+// removeConnection remove iscsi multipath session
 // targetDeviceNames example) []string{"sda", "sdb"}
 func removeConnection(ctx context.Context, targetDeviceNames []string) error {
 	if targetDeviceNames == nil {
