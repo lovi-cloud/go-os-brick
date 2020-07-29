@@ -98,7 +98,6 @@ func getDeviceName(sessionID int, hctl *Hctl) (string, error) {
 		hctl.HostID, hctl.ChannelID, hctl.TargetID,
 		hctl.HostID, hctl.ChannelID, hctl.TargetID, hctl.HostLUNID)
 
-	fmt.Println(p)
 	paths, err := filepath.Glob(p)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse iSCSI block device filepath: %w", err)
