@@ -82,7 +82,7 @@ func GetDeviceName(sessionID int, hctl *Hctl) (string, error) {
 			return deviceName, nil
 		}
 
-		logf("failed to get device name, do retry: %w", err)
+		logf("failed to get device name, do retry: %+v", err)
 		lastErr = err
 		time.Sleep(1 * time.Second)
 	}
