@@ -24,7 +24,7 @@ type ISCSISession struct {
 func GetSessions(ctx context.Context) ([]ISCSISession, error) {
 	out, err := getSessions(ctx)
 	if err != nil {
-		return nil, errors.New("failed to get output of iscsiadm -m session")
+		return nil, fmt.Errorf("failed to get output of iscsiadm -m session: %w", err)
 	}
 
 	return ParseSessions(out)
