@@ -3,6 +3,7 @@ module github.com/whywaita/go-os-brick
 go 1.14
 
 require (
+	github.com/go-test/deep v1.0.7
 	github.com/gostor/gotgt v0.2.0
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/ory/dockertest/v3 v3.6.0
