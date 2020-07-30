@@ -55,15 +55,6 @@ func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targe
 		wg.Add(1)
 		device, err := connectVol(ctx, p.PortalIP, p.TargetIQN, p.HostLUNID)
 		if err != nil {
-			defer func() {
-				for _, p := range paths {
-					err := LogoutPortal(ctx, p.PortalIP, p.TargetIQN)
-					if err != nil {
-						logf("failed to logout: %+v", err)
-					}
-				}
-			}()
-
 			return "", fmt.Errorf("failed to connect volume: %w", err)
 		}
 		devices = append(devices, device)
@@ -114,12 +105,17 @@ func cleanupConnection(ctx context.Context, targetPortalIPs []string, targetHost
 	}
 
 	// check keep block device in same portal ip (from iscsiadm -m session -P3)
-	//if errors.Is(err, ErrNoDevice) {
-	//	// call logout when No action session
-	//	if err := disconnectConnection(ctx, paths); err != nil {
-	//		return fmt.Errorf("failed to disconnet iSCSI connection: %w", err)
-	//	}
-	//}
+	attachedDevices, err := GetAttachedSCSIDevices(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to get attached devices: %w", err)
+	}
+
+	if len(attachedDevices) == 0 {
+		// call logout when No action session
+		if err := disconnectConnection(ctx, paths); err != nil {
+			return fmt.Errorf("failed to disconnet iSCSI connection: %w", err)
+		}
+	}
 
 	return nil
 }
