@@ -119,6 +119,16 @@ func doSendtargets(ctx context.Context, portalIP string) ([]byte, error) {
 	return out, nil
 }
 
+func scanISCSI(ctx context.Context, hctl *Hctl) error {
+	path := fmt.Sprint("/sys/class/scsi_host/host%d/scan", hctl.HostID)
+	content := fmt.Sprintf("%d %d %d",
+		hctl.ChannelID,
+		hctl.TargetID,
+		hctl.HostLUNID)
+
+	return echoScsiCommand(ctx, path, content)
+}
+
 func echoScsiCommand(ctx context.Context, path, content string) error {
 	logf("write scsi file [path: %s content: %s]", path, content)
 	args := []string{"-a", path}
