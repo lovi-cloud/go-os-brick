@@ -67,7 +67,7 @@ func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targe
 	for _, d := range devices {
 		dm, err = findSysfsMultipathDM(d)
 		if err == nil {
-			logf("found dm device")
+			logf("found dm device: %v", dm)
 			break
 		}
 
@@ -270,7 +270,7 @@ func removeScsiSymlinks(devicePaths []string) error {
 	for _, link := range links {
 		realpath, err := filepath.EvalSymlinks(link)
 		if err != nil {
-			return fmt.Errorf("failed to get realpath: %w", err)
+			logf("failed to get realpath: %v", err)
 		}
 
 		for _, devicePath := range devicePaths {

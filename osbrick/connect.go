@@ -18,6 +18,10 @@ func connectVol(ctx context.Context, portalIP, targetIqn string, targetHostLunID
 		return "", fmt.Errorf("failed to get hctl: %w", err)
 	}
 
+	if err := scanISCSI(ctx, hctl); err != nil {
+		return "", fmt.Errorf("failed to rescan target: %w", err)
+	}
+
 	device, err := GetDeviceName(sessionID, hctl)
 	if err != nil {
 		return "", fmt.Errorf("failed to get device name: %w", err)
@@ -29,13 +33,19 @@ func connectVol(ctx context.Context, portalIP, targetIqn string, targetHostLunID
 
 // connectPortal connect to iSCSI Portal via target IQN.
 // return session id.
-func connectToiSCSIPortal(ctx context.Context, portalIP, targetIqn string, retryCount int) (int, error) {
+func connectToiSCSIPortal(ctx context.Context, portalIP, targetIQN string, retryCount int) (int, error) {
 	if retryCount == 0 {
 		retryCount = 10
 	}
 
-	err := LoginPortal(ctx, portalIP, targetIqn)
-	if err != nil {
+	//// must be node.session.scan is manual
+	//_, _, err := iscsiadmUpdate(ctx, portalIP, targetIQN, "node.session.scan", "manual", nil)
+	//if err != nil {
+	//	return 0, fmt.Errorf("failed to update node.session.scan to manual: %w", err)
+	//}
+
+	// NOTE(whywaita): add while loop if issue of find session
+	if err := LoginPortal(ctx, portalIP, targetIQN); err != nil {
 		return 0, fmt.Errorf("failed to iSCSI portal login: %w", err)
 	}
 	for i := 0; i < retryCount; i++ {
@@ -45,7 +55,7 @@ func connectToiSCSIPortal(ctx context.Context, portalIP, targetIqn string, retry
 		}
 
 		for _, session := range sessions {
-			if session.TargetPortal == portalIP && session.IQN == targetIqn {
+			if session.TargetPortal == portalIP && session.IQN == targetIQN {
 				// found session
 				return session.SessionID, nil
 			}
