@@ -38,11 +38,11 @@ func connectToiSCSIPortal(ctx context.Context, portalIP, targetIQN string, retry
 		retryCount = 10
 	}
 
-	// must be node.session.scan is manual
-	_, _, err := iscsiadmUpdate(ctx, portalIP, targetIQN, "node.session.scan", "manual", nil)
-	if err != nil {
-		return 0, fmt.Errorf("failed to update node.session.scan to manual: %w", err)
-	}
+	//// must be node.session.scan is manual
+	//_, _, err := iscsiadmUpdate(ctx, portalIP, targetIQN, "node.session.scan", "manual", nil)
+	//if err != nil {
+	//	return 0, fmt.Errorf("failed to update node.session.scan to manual: %w", err)
+	//}
 
 	// NOTE(whywaita): add while loop if issue of find session
 	if err := LoginPortal(ctx, portalIP, targetIQN); err != nil {
