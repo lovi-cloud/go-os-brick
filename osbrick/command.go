@@ -7,13 +7,6 @@ import (
 	"syscall"
 )
 
-// command binary
-var (
-	BinaryIscsiadm  = "iscsiadm"
-	BinaryMultipath = "multipath"
-	BinaryBlockdev  = "blockdev"
-)
-
 func iscsiadmBase(ctx context.Context, args []string) ([]byte, int, error) {
 	logf("execute iscsiadm command [args: %s]", args)
 	out, err := exec.CommandContext(ctx, BinaryIscsiadm, args...).CombinedOutput()

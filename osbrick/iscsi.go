@@ -22,11 +22,6 @@ const (
 	ExitCodeNoRecord     = 21
 )
 
-// command binary
-var (
-	BinaryTee = "tee"
-)
-
 // LoginPortal login to iSCSI portal
 func LoginPortal(ctx context.Context, portalIP, targetIQN string) error {
 	logf("start login to portal [Portal: %s]\n", portalIP)
