@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -228,8 +227,7 @@ func flushDeviceIO(ctx context.Context, devicePath string) error {
 		return fmt.Errorf("failed to stat device path: %w", err)
 	}
 
-	_, err = exec.CommandContext(ctx, BinaryBlockdev, "--flushbufs", devicePath).CombinedOutput()
-	if err != nil {
+	if _, _, err := blockdevBase(ctx, []string{"--flushbufs", devicePath}); err != nil {
 		return fmt.Errorf("failed to execute blockdev command: %s", err)
 	}
 
