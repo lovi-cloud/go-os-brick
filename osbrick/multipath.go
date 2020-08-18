@@ -37,6 +37,7 @@ func getiSCSIPath(ips, iqns []string, luns []int) []ISCSIPath {
 
 // ConnectMultipathVolume connect to iSCSI volume using multipath.
 func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) (string, error) {
+	logf("Connecting multipath volume (host lun ID: %d)", targetHostLUNID)
 	var paths []ISCSIPath
 	var err error
 	for _, portalIP := range targetPortalIPs {

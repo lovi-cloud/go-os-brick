@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -68,7 +67,7 @@ func parseSessionSentence(sentence string) (*ISCSISession, error) {
 
 	info := strings.Split(sentence, " ")
 	if len(info) != 5 {
-		return nil, errors.New("invalid sentense")
+		return nil, fmt.Errorf("invalid sentense (%s)", sentence)
 	}
 
 	s.Transport = strings.Trim(info[0], ":")
