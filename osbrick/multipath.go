@@ -213,7 +213,7 @@ func removeScsiDevice(ctx context.Context, devicePath string) error {
 		return fmt.Errorf("failed to flush device I/O: %w", err)
 	}
 
-	err = echoScsiCommand(ctx, deletePath, "1")
+	err = echoScsiCommand(deletePath, "1")
 	if err != nil {
 		return fmt.Errorf("failed to write to delete path: %w", err)
 	}

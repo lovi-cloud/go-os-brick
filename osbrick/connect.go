@@ -18,7 +18,7 @@ func connectVol(ctx context.Context, portalIP, targetIqn string, targetHostLunID
 		return "", fmt.Errorf("failed to get hctl: %w", err)
 	}
 
-	if err := scanISCSI(ctx, hctl); err != nil {
+	if err := scanISCSI(hctl); err != nil {
 		return "", fmt.Errorf("failed to rescan target: %w", err)
 	}
 

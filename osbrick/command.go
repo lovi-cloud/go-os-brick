@@ -3,7 +3,7 @@ package osbrick
 import (
 	"context"
 	"fmt"
-	"io"
+	"os"
 	"os/exec"
 	"syscall"
 )
@@ -61,26 +61,18 @@ func blockdevBase(ctx context.Context, args []string) ([]byte, int, error) {
 	return out, 0, nil
 }
 
-func echoScsiCommand(ctx context.Context, path, content string) error {
-	commandMu.Lock()
-	defer commandMu.Unlock()
-
+func echoScsiCommand(path, content string) error {
+	// write content to path
 	logf("write scsi file [path: %s content: %s]", path, content)
-	args := []string{"-a", path}
 
-	cmd := exec.CommandContext(ctx, BinaryTee, args...)
-	stdin, err := cmd.StdinPipe()
+	f, err := os.Open(path)
 	if err != nil {
-		fmt.Errorf("failed to get stdin pipe: %w", err)
+		return fmt.Errorf("failed to open file: %w", path, err)
 	}
-	go func() {
-		defer stdin.Close()
-		io.WriteString(stdin, content)
-	}()
+	defer f.Close()
 
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("failed to execute command (out: %s): %w", string(out), err)
+	if _, err := f.WriteString(content); err != nil {
+		return fmt.Errorf("failed to write file: %w", err)
 	}
 
 	return nil

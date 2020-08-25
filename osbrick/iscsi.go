@@ -112,12 +112,12 @@ func doSendtargets(ctx context.Context, portalIP string) ([]byte, error) {
 	return out, nil
 }
 
-func scanISCSI(ctx context.Context, hctl *Hctl) error {
+func scanISCSI(hctl *Hctl) error {
 	path := fmt.Sprintf("/sys/class/scsi_host/host%d/scan", hctl.HostID)
 	content := fmt.Sprintf("%d %d %d",
 		hctl.ChannelID,
 		hctl.TargetID,
 		hctl.HostLUNID)
 
-	return echoScsiCommand(ctx, path, content)
+	return echoScsiCommand(path, content)
 }
