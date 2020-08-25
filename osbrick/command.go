@@ -62,12 +62,12 @@ func blockdevBase(ctx context.Context, args []string) ([]byte, int, error) {
 }
 
 func echoScsiCommand(path, content string) error {
-	// write content to path
+	// write content to path (sysfs)
 	logf("write scsi file [path: %s content: %s]", path, content)
 
-	f, err := os.Open(path)
+	f, err := os.OpenFile(path, os.O_WRONLY, 0400)
 	if err != nil {
-		return fmt.Errorf("failed to open file: %w", path, err)
+		return fmt.Errorf("failed to open file: %w", err)
 	}
 	defer f.Close()
 
