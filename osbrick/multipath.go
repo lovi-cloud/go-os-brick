@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -37,6 +36,7 @@ func getiSCSIPath(ips, iqns []string, luns []int) []ISCSIPath {
 
 // ConnectMultipathVolume connect to iSCSI volume using multipath.
 func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) (string, error) {
+	logf("Connecting multipath volume (host lun ID: %d)", targetHostLUNID)
 	var paths []ISCSIPath
 	var err error
 	for _, portalIP := range targetPortalIPs {
@@ -213,7 +213,7 @@ func removeScsiDevice(ctx context.Context, devicePath string) error {
 		return fmt.Errorf("failed to flush device I/O: %w", err)
 	}
 
-	err = echoScsiCommand(ctx, deletePath, "1")
+	err = echoScsiCommand(deletePath, "1")
 	if err != nil {
 		return fmt.Errorf("failed to write to delete path: %w", err)
 	}
@@ -227,8 +227,7 @@ func flushDeviceIO(ctx context.Context, devicePath string) error {
 		return fmt.Errorf("failed to stat device path: %w", err)
 	}
 
-	_, err = exec.CommandContext(ctx, BinaryBlockdev, "--flushbufs", devicePath).CombinedOutput()
-	if err != nil {
+	if _, _, err := blockdevBase(ctx, []string{"--flushbufs", devicePath}); err != nil {
 		return fmt.Errorf("failed to execute blockdev command: %s", err)
 	}
 

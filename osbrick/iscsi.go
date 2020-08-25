@@ -6,8 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"os/exec"
 	"strings"
 )
 
@@ -20,11 +18,6 @@ var (
 const (
 	ExitCodeAlreadyLogin = 15
 	ExitCodeNoRecord     = 21
-)
-
-// command binary
-var (
-	BinaryTee = "tee"
 )
 
 // LoginPortal login to iSCSI portal
@@ -119,34 +112,12 @@ func doSendtargets(ctx context.Context, portalIP string) ([]byte, error) {
 	return out, nil
 }
 
-func scanISCSI(ctx context.Context, hctl *Hctl) error {
+func scanISCSI(hctl *Hctl) error {
 	path := fmt.Sprintf("/sys/class/scsi_host/host%d/scan", hctl.HostID)
 	content := fmt.Sprintf("%d %d %d",
 		hctl.ChannelID,
 		hctl.TargetID,
 		hctl.HostLUNID)
 
-	return echoScsiCommand(ctx, path, content)
-}
-
-func echoScsiCommand(ctx context.Context, path, content string) error {
-	logf("write scsi file [path: %s content: %s]", path, content)
-	args := []string{"-a", path}
-
-	cmd := exec.CommandContext(ctx, BinaryTee, args...)
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		fmt.Errorf("failed to get stdin pipe: %w", err)
-	}
-	go func() {
-		defer stdin.Close()
-		io.WriteString(stdin, content)
-	}()
-
-	_, err = cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("failed to execute command")
-	}
-
-	return nil
+	return echoScsiCommand(path, content)
 }
