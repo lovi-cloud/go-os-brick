@@ -84,6 +84,11 @@ func GetDeviceName(sessionID int, hctl *Hctl) (string, error) {
 
 		logf("failed to get device name (sessionID: %d, hctl: %+v), do retry: %+v", sessionID, hctl, err)
 		lastErr = err
+
+		if err := scanISCSI(hctl); err != nil {
+			return "", fmt.Errorf("failed to scan iSCSI: %w", err)
+		}
+
 		time.Sleep(1 * time.Second)
 	}
 
