@@ -3,70 +3,28 @@
 package testutils
 
 import (
-	"errors"
-	"fmt"
-	"log"
-	"net"
-	"path"
-	"runtime"
-	"testing"
-	"time"
-
-	"github.com/ory/dockertest/v3"
+	"context"
 	"github.com/ory/dockertest/v3/docker"
+	"os/exec"
+	"testing"
 )
 
 func integrationTestTargetRunnerVirtual(m *testing.M) int {
 	testTargetIQN = "iqn.0000-00.com.example:target0"
 	testTgtHostLUNID = "0"
 	testInitiatorIQN = "iqn.0000-00.com.example:initiator0"
+	testTargetHosts = []string{"127.0.0.1:3260"}
 
-	pool, err := dockertest.NewPool("")
-	if err != nil {
-		log.Fatalf("Could not connect to docker: %+v", err)
-	}
-
-	options := &dockertest.RunOptions{
-		Name:       "iscsi-target",
-		Privileged: true,
-		PortBindings: map[docker.Port][]docker.PortBinding{
-			"3260/tcp": {{HostPort: "3260/tcp"}},
-		},
-	}
-
-	_, pwd, _, _ := runtime.Caller(0)
-	resource, err := pool.BuildAndRunWithOptions(fmt.Sprintf(testDockerfilePath, path.Dir(pwd)), options, EnableNetworkHostMode)
-	if err != nil {
-		log.Fatalf("Could not start resource: %+v", err)
-	}
-
-	if err := pool.Retry(func() error {
-		address :=  resource.Container.NetworkSettings.IPAddress
-		if address == "" {
-			address = "127.0.0.1"
-		}
-
-		targetHost := fmt.Sprintf("%s:%s", address, "3260")
-
-		conn, err := net.DialTimeout("tcp", targetHost, 1*time.Second)
-		if err != nil {
-			return err
-		}
-		if conn == nil {
-			return errors.New("could not create connection to docker")
-		}
-		defer conn.Close()
-
-		testTargetHosts = []string{targetHost}
-		return nil
-	}); err != nil {
-		log.Fatalf("Could not connect to docker: %+v", err)
+	if out, err := exec.CommandContext(context.Background(), "../../test/scripts/init.sh").CombinedOutput(); err != nil {
+		log.Printf("init.sh return err: %+v (out: %+v)", err, out)
+		return 1
 	}
 
 	code := m.Run()
 
-	if err := pool.Purge(resource); err != nil {
-		log.Fatalf("Could not purge resource: %+v", err)
+	if out, err := exec.CommandContext(context.Background(), "../../test/scripts/teardown.sh").CombinedOutput(); err != nil {
+		log.Printf("init.sh return err: %+v (out: %+v)", err, out)
+		return 1
 	}
 
 	return code

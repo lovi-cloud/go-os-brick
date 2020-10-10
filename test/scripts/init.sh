@@ -1,5 +1,8 @@
 #!/bin/bash
 
+apt update -y -qq
+apt install -y targetcli-fb dbus kmod
+
 # enable d-bus daemon
 mkdir /run/dbus
 dbus-daemon --system
@@ -16,6 +19,3 @@ targetcli /iscsi/iqn.0000-00.com.example:target0/tpg1/acls create iqn.0000-00.co
 targetcli /iscsi/iqn.0000-00.com.example:target0/tpg1 set attribute authentication=0
 
 targetcli saveconfig
-
-## main loop
-tail -f /dev/null
