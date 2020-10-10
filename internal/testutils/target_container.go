@@ -46,7 +46,7 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 			address = "127.0.0.1"
 		}
 
-		targetHost := fmt.Sprintf("%s:%s", addresss, "3260")
+		targetHost := fmt.Sprintf("%s:%s", address, "3260")
 
 		conn, err := net.DialTimeout("tcp", targetHost, 1*time.Second)
 		if err != nil {
