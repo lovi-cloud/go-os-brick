@@ -35,7 +35,7 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 	}
 
 	_, pwd, _, _ := runtime.Caller(0)
-	resource, err := pool.BuildAndRunWithOptions(fmt.Sprintf(testDockerfilePath, path.Dir(pwd)), options)
+	resource, err := pool.BuildAndRunWithOptions(fmt.Sprintf(testDockerfilePath, path.Dir(pwd)), options, EnableNetworkHostMode)
 	if err != nil {
 		log.Fatalf("Could not start resource: %+v", err)
 	}
@@ -65,4 +65,8 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 	}
 
 	return code
+}
+
+func EnableNetworkHostMode(hc *docker.HostConfig) {
+	hc.NetworkMode = "host"
 }
