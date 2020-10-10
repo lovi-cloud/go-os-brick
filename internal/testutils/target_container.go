@@ -41,7 +41,12 @@ func integrationTestTargetRunnerVirtual(m *testing.M) int {
 	}
 
 	if err := pool.Retry(func() error {
-		targetHost := fmt.Sprintf("%s:%s", resource.Container.NetworkSettings.IPAddress, "3260")
+		address :=  resource.Container.NetworkSettings.IPAddress
+		if address == "" {
+			address = "127.0.0.1"
+		}
+
+		targetHost := fmt.Sprintf("%s:%s", addresss, "3260")
 
 		conn, err := net.DialTimeout("tcp", targetHost, 1*time.Second)
 		if err != nil {
