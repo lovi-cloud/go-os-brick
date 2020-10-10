@@ -23,7 +23,7 @@ jobs:
         uses: jwalton/gh-docker-logs@v1
 
   test-by-openiscsi:
-    name: test by real open-iscsi container (fail on GitHub Actions)
+    name: test by real open-iscsi
     runs-on: ubuntu-latest
     steps:
       - name: setup kernel module
@@ -38,7 +38,4 @@ jobs:
         with:
           fetch-depth: 1
       - name: test
-        run: sudo go test -tags=container -v ./...
-      - name: Dump docker logs on failure
-        if: failure()
-        uses: jwalton/gh-docker-logs@v1
+        run: sudo go test -tags=host -v ./...

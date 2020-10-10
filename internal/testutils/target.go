@@ -6,11 +6,6 @@ import (
 	"testing"
 )
 
-// testing file path
-const (
-	testDockerfilePath = "%s/../../test/docker/Dockerfile"
-)
-
 var (
 	testTargetHosts  []string
 	testTargetIQN    string

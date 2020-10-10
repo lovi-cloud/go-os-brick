@@ -6,6 +6,5 @@ help:
 test: ## test by gotgt (support multi platform)
 	act -j test -P ubuntu-latest=whywaita/iscsi-client
 
-test-openicsi: ## test by real open-iscsi container (only support on linux)
-	#act -j test-by-openiscsi -P ubuntu-latest=whywaita/iscsi-clinet
-	go test -tags=container -v ./...
+test-openicsi: ## test by real open-iscsi (only support on linux)
+	go test -tags=host -v ./...
