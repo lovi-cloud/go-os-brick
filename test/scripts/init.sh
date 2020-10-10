@@ -7,6 +7,8 @@ apt install -y targetcli-fb dbus kmod
 mkdir /run/dbus
 dbus-daemon --system
 
+echo "InitiatorName=iqn.0000-00.com.example:initiator0" > /etc/iscsi/initiatorname.iscsi
+
 # create LUN
 mkdir /iscsi_data
 
