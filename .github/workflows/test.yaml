@@ -42,3 +42,5 @@ jobs:
       - name: Dump docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v1
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
