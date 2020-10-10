@@ -13,15 +13,17 @@ This test need some kernel modules.
 $ sudo go test -v ./...
 ```
 
-### using open-iscsi targetd in a docker container
+### using open-iscsi targetd in a host machine
 
-backend is Docker container contain open-iscsi targetd.
+**WARNING: DO NOT EXECUTE YOUR WORKSPACE!!**
+
+This test execute script in a host.
+
+backend is open-iscsi targetd in a host machine.
 This test need some kernel modules.
 
-please see detail in `test/docker/Dockerfile`.
-
 ```
-$ sudo go test -tags=container -v ./...
+$ sudo go test -tags=host -v ./...
 ```
 
 ### using real iSCSI target endpoint

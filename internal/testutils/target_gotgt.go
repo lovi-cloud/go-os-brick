@@ -1,4 +1,4 @@
-// +build !container
+// +build !host
 
 package testutils
 

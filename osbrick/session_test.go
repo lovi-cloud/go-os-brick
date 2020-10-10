@@ -1,58 +1,67 @@
 package osbrick
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/go-test/deep"
 )
 
 func TestParseSessions(t *testing.T) {
-	testInput := []string{
-		"tcp: [1] 192.0.2.100:3260,1 iqn.0000-00.com.example:name1:192.0.2.100 (non-flash)", // single session
-		`tcp: [3] 192.0.2.100:3260,1 iqn.0000-00.com.example:name2:192.0.2.100 (non-flash)
-tcp: [5] 192.0.2.100:3260,2 iqn.0000-00.com.example:name100:192.0.2.100 (non-flash)`, // multi sessions
-	}
-
-	testOutput := [][]ISCSISession{
+	tests := []struct{
+		input string
+		want []ISCSISession
+		err bool
+	}{
 		{
-			{
-				Transport:            "tcp",
-				SessionID:            1,
-				TargetPortal:         "192.0.2.100:3260",
-				TargetPortalGroupTag: 1,
-				IQN:                  "iqn.0000-00.com.example:name1:192.0.2.100",
-				NodeType:             "(non-flash)",
+			input: "tcp: [1] 192.0.2.100:3260,1 iqn.0000-00.com.example:name1:192.0.2.100 (non-flash)",
+			want:[]ISCSISession{
+				{
+					Transport:            "tcp",
+					SessionID:            1,
+					TargetPortal:         "192.0.2.100:3260",
+					TargetPortalGroupTag: 1,
+					IQN:                  "iqn.0000-00.com.example:name1:192.0.2.100",
+					NodeType:             "(non-flash)",
+				},
 			},
+			err:  false,
 		},
 		{
-			{
-				Transport:            "tcp",
-				SessionID:            3,
-				TargetPortal:         "192.0.2.100:3260",
-				TargetPortalGroupTag: 1,
-				IQN:                  "iqn.0000-00.com.example:name2:192.0.2.100",
-				NodeType:             "(non-flash)",
+			input: `tcp: [3] 192.0.2.100:3260,1 iqn.0000-00.com.example:name2:192.0.2.100 (non-flash)
+tcp: [5] 192.0.2.100:3260,2 iqn.0000-00.com.example:name100:192.0.2.100 (non-flash)`,
+			want: []ISCSISession{
+				{
+					Transport:            "tcp",
+					SessionID:            3,
+					TargetPortal:         "192.0.2.100:3260",
+					TargetPortalGroupTag: 1,
+					IQN:                  "iqn.0000-00.com.example:name2:192.0.2.100",
+					NodeType:             "(non-flash)",
+				},
+				{
+					Transport:            "tcp",
+					SessionID:            5,
+					TargetPortal:         "192.0.2.100:3260",
+					TargetPortalGroupTag: 2,
+					IQN:                  "iqn.0000-00.com.example:name100:192.0.2.100",
+					NodeType:             "(non-flash)",
+				},
 			},
-			{
-				Transport:            "tcp",
-				SessionID:            5,
-				TargetPortal:         "192.0.2.100:3260",
-				TargetPortalGroupTag: 2,
-				IQN:                  "iqn.0000-00.com.example:name100:192.0.2.100",
-				NodeType:             "(non-flash)",
-			},
+			err: false,
 		},
 	}
 
-	for i, input := range testInput {
-		sessions, err := ParseSessions([]byte(input))
-		if err != nil {
-			t.Error(err)
+
+	for _, test := range tests {
+		got, err := ParseSessions([]byte(test.input))
+		if !test.err && err != nil {
+			t.Fatalf("should not be error for %v but: %v", test.input, err)
 		}
-
-		if reflect.DeepEqual(sessions, testOutput[i]) == false {
-			t.Errorf("Unexpected a parsed result: %s", input)
+		if test.err && err == nil {
+			t.Fatalf("should be error for %v but not: nil", test.input)
+		}
+		if diff := deep.Equal(test.want, got); len(diff) != 0 {
+			t.Fatalf("want %q, but %q, diff %q:", test.want, got, diff)
 		}
 	}
 }
