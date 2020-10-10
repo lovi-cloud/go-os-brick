@@ -26,6 +26,9 @@ jobs:
     name: test by real open-iscsi container (fail on GitHub Actions)
     runs-on: ubuntu-latest
     steps:
+      - name: setup kernel module
+        run: |
+          sudo modprobe target_core_mod
       - name: setup go
         uses: actions/setup-go@v1
         with:
