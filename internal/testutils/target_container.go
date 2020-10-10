@@ -3,6 +3,7 @@
 package testutils
 
 import (
+	"log"
 	"context"
 	"github.com/ory/dockertest/v3/docker"
 	"os/exec"
