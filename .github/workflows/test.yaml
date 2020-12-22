@@ -19,10 +19,11 @@ jobs:
       - name: test
         run: sudo $(echo $(which go)) test -v ./...
       - name: Dump docker logs on failure
-        if: failure()
+        if: ${{ failure() }}
         uses: jwalton/gh-docker-logs@v1
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
+        if: ${{ always() }}
 
   test-by-openiscsi:
     name: test by real open-iscsi
