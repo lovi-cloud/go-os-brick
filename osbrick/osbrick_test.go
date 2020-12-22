@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/whywaita/go-os-brick/internal/testutils"
+	"github.com/lovi-cloud/go-os-brick/internal/testutils"
 )
 
 func TestMain(m *testing.M) {

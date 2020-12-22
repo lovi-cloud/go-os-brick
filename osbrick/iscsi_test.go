@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/whywaita/go-os-brick/internal/testutils"
+	"github.com/lovi-cloud/go-os-brick/internal/testutils"
 )
 
 func TestLoginLogoutPortal(t *testing.T) {
