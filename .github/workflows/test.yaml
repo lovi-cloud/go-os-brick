@@ -17,9 +17,9 @@ jobs:
         with:
           fetch-depth: 1
       - name: test
-        run: sudo $(echo $(which go)) test -v ./...
+        run: sudo go test -v ./...
       - name: Dump docker logs on failure
-        if: failure()
+        if: ${{ failure() }}
         uses: jwalton/gh-docker-logs@v1
 
   test-by-openiscsi:
