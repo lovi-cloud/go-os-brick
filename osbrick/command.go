@@ -77,3 +77,27 @@ func echoScsiCommand(path, content string) error {
 
 	return nil
 }
+
+func qemuimgConvertBase(ctx context.Context, args []string) error {
+	c := []string{"convert"}
+	a := append(c, args...)
+
+	logf("execute qemu-img command [args: %s]", a)
+	out, err := exec.CommandContext(ctx, "qemu-img", a...).CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to execute qemu-img convert command (args: %s, out: %s): %w", args, string(out), err)
+	}
+
+	return nil
+}
+
+// QEMUToRaw convert os image.
+func QEMUToRaw(ctx context.Context, src, dest string) error {
+	args := []string{"-O", "raw", "-t", "none", "-f", "qcow2", src, dest}
+
+	if err := qemuimgConvertBase(ctx, args); err != nil {
+		return fmt.Errorf("failed to execute convert command: %w", err)
+	}
+
+	return nil
+}
