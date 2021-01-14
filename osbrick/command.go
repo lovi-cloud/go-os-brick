@@ -9,9 +9,6 @@ import (
 )
 
 func iscsiadmBase(ctx context.Context, args []string) ([]byte, int, error) {
-	//commandMu.Lock()
-	//defer commandMu.Unlock()
-
 	logf("execute iscsiadm command [args: %s]", args)
 	out, err := exec.CommandContext(ctx, BinaryIscsiadm, args...).CombinedOutput()
 	if err != nil {
@@ -28,9 +25,6 @@ func iscsiadmBase(ctx context.Context, args []string) ([]byte, int, error) {
 }
 
 func multipathBase(ctx context.Context, args []string) ([]byte, int, error) {
-	//commandMu.Lock()
-	//defer commandMu.Unlock()
-
 	logf("execute multipath command [args: %s]", args)
 	out, err := exec.CommandContext(ctx, BinaryMultipath, args...).CombinedOutput()
 	if err != nil {
@@ -43,9 +37,6 @@ func multipathBase(ctx context.Context, args []string) ([]byte, int, error) {
 }
 
 func blockdevBase(ctx context.Context, args []string) ([]byte, int, error) {
-	//commandMu.Lock()
-	//defer commandMu.Unlock()
-
 	logf("execute blockdev command [args: %s]", args)
 	out, err := exec.CommandContext(ctx, BinaryBlockdev, args...).CombinedOutput()
 	if err != nil {
