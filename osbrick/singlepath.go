@@ -44,7 +44,7 @@ func DisconnectSinglePathVolume(ctx context.Context, targetPortalIP string, targ
 		return fmt.Errorf("failed to get devices list: %w", err)
 	}
 
-	if err := removeConnection(ctx, targetDevices); err != nil {
+	if err := removeSingleConnection(ctx, targetDevices[0]); err != nil {
 		return fmt.Errorf("failed to remove connection: %w", err)
 	}
 
