@@ -4,31 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"path/filepath"
 	"time"
 )
-
-// ConnectSinglePathVolume connect to iSCSI volume
-func ConnectSinglePathVolume(ctx context.Context, targetPortalIP string, targetHostLUNID int) (string, error) {
-	logf("Connecting volume (host lun ID: %d)", targetHostLUNID)
-
-	ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, targetPortalIP, targetHostLUNID)
-	if err != nil {
-		return "", fmt.Errorf("failed to get target info: %w", err)
-	}
-	paths := getiSCSIPath(ips, iqns, luns)
-	if len(paths) != 1 {
-		return "", fmt.Errorf("found multipath but call ConnectSinglePathVolume")
-	}
-	p := paths[0]
-
-	device, err := connectVol(ctx, p.PortalIP, p.TargetIQN, p.HostLUNID)
-	if err != nil {
-		return "", fmt.Errorf("failed to connect volume: %w", err)
-	}
-
-	return filepath.Join("/dev", device), nil
-}
 
 func connectVol(ctx context.Context, portalIP, targetIqn string, targetHostLunID int) (string, error) {
 	sessionID, err := connectToiSCSIPortal(ctx, portalIP, targetIqn, 0)

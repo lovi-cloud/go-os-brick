@@ -78,7 +78,7 @@ func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targe
 	return filepath.Join("/dev", dm), nil
 }
 
-// DisconnectVolume disconnect volume
+// DisconnectVolume disconnect multi path volume
 func DisconnectVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) error {
 	return cleanupConnection(ctx, targetPortalIPs, targetHostLUNID)
 }
