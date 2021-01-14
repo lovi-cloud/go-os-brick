@@ -9,9 +9,6 @@ import (
 )
 
 func iscsiadmBase(ctx context.Context, args []string) ([]byte, int, error) {
-	//commandMu.Lock()
-	//defer commandMu.Unlock()
-
 	logf("execute iscsiadm command [args: %s]", args)
 	out, err := exec.CommandContext(ctx, BinaryIscsiadm, args...).CombinedOutput()
 	if err != nil {
@@ -28,9 +25,6 @@ func iscsiadmBase(ctx context.Context, args []string) ([]byte, int, error) {
 }
 
 func multipathBase(ctx context.Context, args []string) ([]byte, int, error) {
-	//commandMu.Lock()
-	//defer commandMu.Unlock()
-
 	logf("execute multipath command [args: %s]", args)
 	out, err := exec.CommandContext(ctx, BinaryMultipath, args...).CombinedOutput()
 	if err != nil {
@@ -43,9 +37,6 @@ func multipathBase(ctx context.Context, args []string) ([]byte, int, error) {
 }
 
 func blockdevBase(ctx context.Context, args []string) ([]byte, int, error) {
-	//commandMu.Lock()
-	//defer commandMu.Unlock()
-
 	logf("execute blockdev command [args: %s]", args)
 	out, err := exec.CommandContext(ctx, BinaryBlockdev, args...).CombinedOutput()
 	if err != nil {
@@ -73,6 +64,30 @@ func echoScsiCommand(path, content string) error {
 
 	if _, err := f.WriteString(content); err != nil {
 		return fmt.Errorf("failed to write file: %w", err)
+	}
+
+	return nil
+}
+
+func qemuimgConvertBase(ctx context.Context, args []string) error {
+	c := []string{"convert"}
+	a := append(c, args...)
+
+	logf("execute qemu-img command [args: %s]", a)
+	out, err := exec.CommandContext(ctx, "qemu-img", a...).CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to execute qemu-img convert command (args: %s, out: %s): %w", args, string(out), err)
+	}
+
+	return nil
+}
+
+// QEMUToRaw convert os image.
+func QEMUToRaw(ctx context.Context, src, dest string) error {
+	args := []string{"-O", "raw", "-t", "none", "-f", "qcow2", src, dest}
+
+	if err := qemuimgConvertBase(ctx, args); err != nil {
+		return fmt.Errorf("failed to execute convert command: %w", err)
 	}
 
 	return nil
