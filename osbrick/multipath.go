@@ -35,6 +35,8 @@ func getiSCSIPath(ips, iqns []string, luns []int) []ISCSIPath {
 }
 
 // ConnectMultipathVolume is old name function for backward compatibility
+//
+// Deprecated: Replace to ConnectMultiPathVolume
 func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) (string, error) {
 	return ConnectMultiPathVolume(ctx, targetPortalIPs, targetHostLUNID)
 }
