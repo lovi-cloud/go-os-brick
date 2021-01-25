@@ -7,7 +7,7 @@ import (
 	"github.com/lovi-cloud/go-os-brick/internal/testutils"
 )
 
-func TestConnectMultipathVolume(t *testing.T) {
+func TestConnectMultiPathVolume(t *testing.T) {
 	testTargetIPs, _, teardown := testutils.GetTestTarget()
 	defer teardown()
 
@@ -19,7 +19,7 @@ func TestConnectMultipathVolume(t *testing.T) {
 	for i := 1; i <= 10; i++ {
 		hostLUNID := i
 
-		deviceName, err := ConnectMultipathVolume(context.Background(), testTargetIPs, hostLUNID)
+		deviceName, err := ConnectMultiPathVolume(context.Background(), testTargetIPs, hostLUNID)
 		if err != nil {
 			t.Errorf("ConnectMultipathVolume return err: %+v", err)
 		}
