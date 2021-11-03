@@ -37,17 +37,17 @@ func getiSCSIPath(ips, iqns []string, luns []int) []ISCSIPath {
 // ConnectMultipathVolume is old name function for backward compatibility
 //
 // Deprecated: Replace to ConnectMultiPathVolume
-func ConnectMultipathVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) (string, error) {
-	return ConnectMultiPathVolume(ctx, targetPortalIPs, targetHostLUNID)
+func ConnectMultipathVolume(ctx context.Context, targetPortalIPs, targetIQNs []string, targetHostLUNID int) (string, error) {
+	return ConnectMultiPathVolume(ctx, targetPortalIPs, targetIQNs, targetHostLUNID)
 }
 
 // ConnectMultiPathVolume connect to iSCSI volume using multipath.
-func ConnectMultiPathVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) (string, error) {
+func ConnectMultiPathVolume(ctx context.Context, targetPortalIPs, targetIQNs []string, targetHostLUNID int) (string, error) {
 	logf("Connecting multipath volume (host lun ID: %d)", targetHostLUNID)
 	var paths []ISCSIPath
 	var err error
-	for _, portalIP := range targetPortalIPs {
-		ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, portalIP, targetHostLUNID)
+	for i, portalIP := range targetPortalIPs {
+		ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, portalIP,  targetIQNs[i], targetHostLUNID)
 		if err != nil {
 			return "", fmt.Errorf("failed to get target info: %w", err)
 		}
@@ -86,14 +86,14 @@ func ConnectMultiPathVolume(ctx context.Context, targetPortalIPs []string, targe
 }
 
 // DisconnectVolume disconnect multi path volume
-func DisconnectVolume(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) error {
-	return cleanupConnection(ctx, targetPortalIPs, targetHostLUNID)
+func DisconnectVolume(ctx context.Context, targetPortalIPs, targetIQNs []string, targetHostLUNID int) error {
+	return cleanupConnection(ctx, targetPortalIPs, targetIQNs, targetHostLUNID)
 }
 
-func cleanupConnection(ctx context.Context, targetPortalIPs []string, targetHostLUNID int) error {
+func cleanupConnection(ctx context.Context, targetPortalIPs, targetIQNs []string, targetHostLUNID int) error {
 	var paths []ISCSIPath
-	for _, portalIP := range targetPortalIPs {
-		ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, portalIP, targetHostLUNID)
+	for i, portalIP := range targetPortalIPs {
+		ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, portalIP,targetIQNs[i], targetHostLUNID)
 		if err != nil {
 			return fmt.Errorf("failed to get ips, iqns, luns: %w", err)
 		}

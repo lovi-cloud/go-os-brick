@@ -8,10 +8,10 @@ import (
 )
 
 // ConnectSinglePathVolume connect to iSCSI volume
-func ConnectSinglePathVolume(ctx context.Context, targetPortalIP string, targetHostLUNID int) (string, error) {
+func ConnectSinglePathVolume(ctx context.Context, targetPortalIP, targetIQN string, targetHostLUNID int) (string, error) {
 	logf("Connecting volume (host lun ID: %d)", targetHostLUNID)
 
-	ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, targetPortalIP, targetHostLUNID)
+	ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, targetPortalIP, targetIQN, targetHostLUNID)
 	if err != nil {
 		return "", fmt.Errorf("failed to get target info: %w", err)
 	}
@@ -30,8 +30,8 @@ func ConnectSinglePathVolume(ctx context.Context, targetPortalIP string, targetH
 }
 
 // DisconnectSinglePathVolume disconnect single path volume
-func DisconnectSinglePathVolume(ctx context.Context, targetPortalIP string, targetHostLUNID int) error {
-	ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, targetPortalIP, targetHostLUNID)
+func DisconnectSinglePathVolume(ctx context.Context, targetPortalIP, targetIQN string, targetHostLUNID int) error {
+	ips, iqns, luns, err := GetIPsIQNsLUNs(ctx, targetPortalIP, targetIQN, targetHostLUNID)
 	if err != nil {
 		return fmt.Errorf("failed to get target info: %w", err)
 	}
