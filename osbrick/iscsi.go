@@ -56,13 +56,13 @@ func LogoutPortal(ctx context.Context, portalIP, targetIQN string) error {
 }
 
 // GetIPsIQNsLUNs get a some information
-func GetIPsIQNsLUNs(ctx context.Context, portalIP string, targetHostLUNID int) ([]string, []string, []int, error) {
+func GetIPsIQNsLUNs(ctx context.Context, portalIP, targetIQN string, targetHostLUNID int) ([]string, []string, []int, error) {
 	out, err := doSendtargets(ctx, portalIP)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to update discoverydb: %w", err)
 	}
 
-	ips, iqns, err := getIPsIQNs(out)
+	ips, iqns, err := getIPsIQNs(out, targetIQN)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to parse sendtargets output: %w", err)
 	}
@@ -74,7 +74,8 @@ func GetIPsIQNsLUNs(ctx context.Context, portalIP string, targetHostLUNID int) (
 
 // getIpsIqns parse output of `iscsiadm -m discovery -t sendtargets`
 // ex: 192.0.2.10:3260,1 iqn.0000-00.com.example:name1:192.0.2.10
-func getIPsIQNs(out []byte) (ips []string, iqns []string, err error) {
+// targetIQN is blank, return all sessions
+func getIPsIQNs(out []byte, targetIQN string) (ips []string, iqns []string, err error) {
 	reader := bytes.NewReader(out)
 	scanner := bufio.NewScanner(reader)
 
@@ -83,6 +84,10 @@ func getIPsIQNs(out []byte) (ips []string, iqns []string, err error) {
 		d := strings.Split(sentence, " ")
 
 		if len(d) == 2 && strings.HasPrefix(d[1], "iqn") {
+			if !strings.EqualFold(targetIQN, "") && !strings.Contains(d[1], targetIQN) {
+				continue
+			}
+
 			// ok
 			ip := strings.Split(d[0], ",")
 			ips = append(ips, ip[0])
